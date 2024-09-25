@@ -6,17 +6,28 @@ use Illuminate\Http\Request;
 use App\Models\Post;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\JsonResponse;
 
 class Postcontroller extends Controller
 {
-    //
+     /**
+     * Display a paginated list of published posts.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function index(Request $request)
     {
-        echo "hell";
         $posts = Post::where('status', 'published')->with('user', 'comments')->paginate(10);
         return response()->json($posts);
     }
 
+    /**
+     * Store a new post.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function store(Request $request)
     {
         $request->validate([
@@ -25,7 +36,6 @@ class Postcontroller extends Controller
             'status' => 'required|in:published,draft',
             'user_id' => 'required|exists:users,id',
         ]);
-        echo "hii";
         $post = Post::create([
             'title' => $request->title,
             'content' => $request->content,
@@ -36,6 +46,13 @@ class Postcontroller extends Controller
         return response()->json($post, 201);
     }
     
+    /**
+     * Update an existing post.
+     *
+     * @param Request $request
+     * @param Post $post
+     * @return JsonResponse
+     */
     public function update(Request $request, Post $id)
     {
        // Validate the incoming request data
@@ -54,6 +71,13 @@ class Postcontroller extends Controller
             'post' => $id
         ], 200);
     }
+
+     /**
+     * Delete an existing post.
+     *
+     * @param Post $post
+     * @return JsonResponse
+     */
     public function destroy(Post $id)
     {
          // Delete the post directly without authorization check

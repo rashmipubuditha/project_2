@@ -12,10 +12,13 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+//auth controllers
+
 Route::post('/register', [Authcontroller::class, 'register'])->name('posts.register');
 
 Route::post('/login', [Authcontroller::class, 'login'])->name('posts.login');
 
+// post controllers
 Route::get('/', [Postcontroller::class, 'index'])->name('posts.index');
 
 Route::post('/posts', [PostController::class, 'store'])->name('posts.store');

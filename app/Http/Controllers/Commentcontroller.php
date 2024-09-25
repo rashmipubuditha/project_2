@@ -6,15 +6,22 @@ use Illuminate\Http\Request;
 use App\Models\Comment;
 use App\Models\Post;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\JsonResponse;
 
 class Commentcontroller extends Controller
 {
-    //
+    /**
+     * Store a new comment for the given post.
+     *
+     * @param Request $request
+     * @param int $postId
+     * @return JsonResponse
+     */
     public function store(Request $request, $postId)
     {
         // Validate the incoming request data
         $request->validate([
-            'body' => 'required|string',
+            'content' => 'required|string',
             'user_id' => 'required|exists:users,id', // You can also retrieve user_id from Auth if needed
         ]);
 
@@ -26,7 +33,7 @@ class Commentcontroller extends Controller
 
         // Create the comment
         $comment = Comment::create([
-            'body' => $request->body,
+            'content' => $request->content,
             'post_id' => $post->id, // Use the existing post ID
             'user_id' => $request->user_id, // Use user_id from the request
         ]);
@@ -34,12 +41,19 @@ class Commentcontroller extends Controller
         return response()->json($comment, 201);
     }
 
-    // Update an existing comment
+    
+    /**
+     * Update an existing comment.
+     *
+     * @param Request $request
+     * @param int $commentId
+     * @return JsonResponse
+     */
     public function update(Request $request, $commentId)
     {
         // Validate the incoming request data
         $validatedData = $request->validate([
-            'body' => 'required|string',
+            'content' => 'required|string',
         ]);
         
         // Find the comment
@@ -58,7 +72,12 @@ class Commentcontroller extends Controller
         ], 200);
     }
 
-    // Delete a comment
+    /**
+     * Delete a comment by ID.
+     *
+     * @param int $commentId
+     * @return JsonResponse
+     */
     public function destroy($commentId)
     {
         // Find the comment
